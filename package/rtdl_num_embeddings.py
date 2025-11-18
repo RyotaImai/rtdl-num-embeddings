@@ -92,7 +92,7 @@ class LinearEmbeddings(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         """Do the forward pass."""
         _check_input_shape(x, self.weight.shape[0])
-        return torch.addcmul(self.bias, self.weight, x[..., None])
+        return self.bias + self.weight * x[..., None]
 
 
 class LinearReLUEmbeddings(nn.Module):
@@ -655,7 +655,7 @@ class _PiecewiseLinearEncodingImpl(nn.Module):
 
     def forward(self, x: Tensor) -> Tensor:
         """Do the forward pass."""
-        x = torch.addcmul(self.bias, self.weight, x[..., None])
+        x = self.bias + self.weight * x[..., None]
         if x.shape[-1] > 1:
             x = torch.cat(
                 [
